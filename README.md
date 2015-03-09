@@ -14,14 +14,23 @@ This is a version of Paul Falstad's circuit simulator (original available at <ht
 compiling and building
 ----------------------
 
-If you have make installed, just `cd` to the *src* directory and run `make`, followed by a `make jar`
+First check pom.xml and ensure if system path to plugin.jar is correct for your system.
+Next, to compile and create app bundle simply run:
 
-If not, compile with `javac *.java` and build the jar file with `jar cfm circuit.jar Manifest.txt *.class *.txt circuits/`
+```
+mvn install
+```
 
 running
 -------
 
-As an application: `java -jar circuit.jar`
+If build is succesfull jar file with application can be found in target directory.
+
+To run use command:
+
+```
+java -jar circuit-*.jar
+```
 
 If you want to use the circuit simulator as an applet, create an html file and load the applet with:
 
