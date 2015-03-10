@@ -8,7 +8,6 @@ import java.util.Set;
 
 public class CheckboxMenuItemGroup implements ItemListener
 {
-
     private Set<CheckboxMenuItem> items = new HashSet<CheckboxMenuItem>();
 
     public void add(CheckboxMenuItem cbmi) {
@@ -20,11 +19,12 @@ public class CheckboxMenuItemGroup implements ItemListener
     @Override
     public void itemStateChanged(ItemEvent e) {
         if (e.getStateChange() == ItemEvent.SELECTED) {
-
             String itemAffected = (String)e.getItem();
             for (CheckboxMenuItem item : items) {
                 if (item.getLabel() != itemAffected) item.setState(false);
             }
+        } else if (e.getStateChange() == ItemEvent.DESELECTED) {
+            ((CheckboxMenuItem)(e.getSource())).setState(true);
         }
     }
 
