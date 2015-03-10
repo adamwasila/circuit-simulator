@@ -39,8 +39,17 @@ import java.util.StringTokenizer;
 	    draw2Leads(g);
 	    setVoltageColor(g, (volts[0]+volts[1])/2);
 	    setPowerColor(g, false);
+
+        switch (sim.getSymbolSet()) {
+            case PN_PL:
+                drawThickCircle(g, center.x, center.y, cr+4);
+                drawThickCircle(g, center.x, center.y, cr);
+                break;
+            default:
+                drawThickCircle(g, center.x, center.y, cr);
+                break;
+        }
 	    
-	    drawThickCircle(g, center.x, center.y, cr);
 	    drawThickLine(g, ashaft1, ashaft2);
 
 	    g.fillPolygon(arrow);
