@@ -95,7 +95,10 @@ class PotElm extends CircuitElm implements AdjustmentListener {
 	int segments = 16;
 	int i;
 	int ox = 0;
-	int hs = sim.euroResistorCheckItem.getState() ? 6 : 8;
+
+    CirSim.SymbolSet symSet = sim.getSymbolSet();
+
+	int hs = symSet != CirSim.SymbolSet.ANSI_US ? 6 : 8;
 	double v1 = volts[0];
 	double v2 = volts[1];
 	double v3 = volts[2];
@@ -104,7 +107,7 @@ class PotElm extends CircuitElm implements AdjustmentListener {
 	setPowerColor(g, true);
 	double segf = 1./segments;
 	int divide = (int) (segments*position);
-	if (!sim.euroResistorCheckItem.getState()) {
+	if (symSet == CirSim.SymbolSet.ANSI_US) {
 	    // draw zigzag
 	    for (i = 0; i != segments; i++) {
 		int nx = 0;

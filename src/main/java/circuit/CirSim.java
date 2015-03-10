@@ -2,23 +2,30 @@ package circuit;// circuit.CirSim.java (c) 2010 by Paul Falstad
 
 // For information about the theory behind this, see Electronic circuit.Circuit & System Simulation Methods by Pillage
 
+import circuit.ui.CheckboxMenuItemGroup;
+
 import java.awt.*;
-import java.util.Vector;
-import java.io.File;
-import java.util.Random;
-import java.lang.Math;
-import java.net.URL;
 import java.awt.event.*;
-import java.io.FilterInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.StringTokenizer;
+import java.io.File;
+import java.io.FilterInputStream;
 import java.lang.reflect.Constructor;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Random;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 public class CirSim extends Frame
   implements ComponentListener, ActionListener, AdjustmentListener,
   MouseMotionListener, MouseListener, ItemListener, KeyListener {
+
+    enum SymbolSet {
+      ANSI_US,
+      IEC_INT,
+      PN_PL
+    };
     
     Thread engine = null;
 
@@ -47,7 +54,13 @@ public class CirSim extends Frame
     CheckboxMenuItem smallGridCheckItem;
     CheckboxMenuItem showValuesCheckItem;
     CheckboxMenuItem conductanceCheckItem;
-    CheckboxMenuItem euroResistorCheckItem;
+
+//    CheckboxMenuItem euroResistorCheckItem;
+
+    CheckboxMenuItem symbolSetANSICheckItem;
+    CheckboxMenuItem symbolSetIECCheckItem;
+    CheckboxMenuItem symbolSetPNCheckItem;
+
     CheckboxMenuItem printableCheckItem;
     CheckboxMenuItem conventionCheckItem;
     CheckboxMenuItem idealWireCheckItem;
@@ -302,8 +315,30 @@ public class CirSim extends Frame
 	showValuesCheckItem.setState(true);
 	//m.add(conductanceCheckItem = getCheckItem("Show Conductance"));
 	m.add(smallGridCheckItem = getCheckItem("Small Grid"));
-	m.add(euroResistorCheckItem = getCheckItem("European Resistors"));
-	euroResistorCheckItem.setState(euro);
+
+//	m.add(euroResistorCheckItem = getCheckItem("European Resistors"));
+//	euroResistorCheckItem.setState(euro);
+
+    CheckboxMenuItemGroup group = new CheckboxMenuItemGroup();
+
+        m.addSeparator();
+        m.add("Symbol set:");
+
+    m.add(symbolSetANSICheckItem = getCheckItem("ANSI (US)"));
+    m.add(symbolSetIECCheckItem = getCheckItem("IEC (International)"));
+    m.add(symbolSetPNCheckItem = getCheckItem("PN (Polish)"));
+
+        group.add(symbolSetANSICheckItem);
+        group.add(symbolSetIECCheckItem);
+        group.add(symbolSetPNCheckItem);
+
+        m.addSeparator();
+        if (euro) {
+            symbolSetIECCheckItem.setState(true);
+        } else {
+            symbolSetANSICheckItem.setState(true);
+        }
+
 	m.add(printableCheckItem = getCheckItem("White Background"));
 	printableCheckItem.setState(printable);
 	m.add(conventionCheckItem = getCheckItem("Conventional Current Motion"));
@@ -601,7 +636,19 @@ public class CirSim extends Frame
 	main.add(m);
 	return m;
     }
-    
+
+    public SymbolSet getSymbolSet() {
+        if (symbolSetANSICheckItem.getState()) {
+            return SymbolSet.ANSI_US;
+        } else if (symbolSetIECCheckItem.getState()) {
+            return SymbolSet.IEC_INT;
+        } else if (symbolSetPNCheckItem.getState()) {
+            return SymbolSet.PN_PL;
+        } else {
+            return null;
+        }
+    };
+
     MenuItem getMenuItem(String s) {
 	MenuItem mi = new MenuItem(s);
 	mi.addActionListener(this);

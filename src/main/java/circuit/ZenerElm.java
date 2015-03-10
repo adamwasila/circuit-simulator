@@ -30,24 +30,34 @@ class ZenerElm extends DiodeElm {
     Polygon poly;
     Point cathode[];
     Point wing[];
+    Point wing2[];
+    Point wing3 = new Point();
 	
     void setPoints() {
 	super.setPoints();
 	calcLeads(16);
 	cathode = newPointArray(2);
 	wing = newPointArray(2);
+    wing2 = newPointArray(2);
 	Point pa[] = newPointArray(2);
 	interpPoint2(lead1, lead2, pa[0], pa[1], 0, hs);
 	interpPoint2(lead1, lead2, cathode[0], cathode[1], 1, hs);
-	interpPoint(cathode[0], cathode[1], wing[0], -0.2, -hs);
-	interpPoint(cathode[1], cathode[0], wing[1], -0.2, -hs);
+        interpPoint(cathode[0], cathode[1], wing[0], -0.2, -hs);
+        interpPoint(cathode[1], cathode[0], wing[1], -0.2, -hs);
+    interpPoint(cathode[0], cathode[1], wing2[0], 0, -hs);
+    interpPoint(cathode[1], cathode[0], wing2[1], 0, -hs);
+
+        interpPoint(cathode[1], cathode[0], wing3, 0, hs);
+
 	poly = createPolygon(pa[0], pa[1], lead2);
     }
 	
     void draw(Graphics g) {
 	setBbox(point1, point2, hs);
 
-	double v1 = volts[0];
+    CirSim.SymbolSet symSet = sim.getSymbolSet();
+
+    double v1 = volts[0];
 	double v2 = volts[1];
 
 	draw2Leads(g);
@@ -61,10 +71,21 @@ class ZenerElm extends DiodeElm {
 	setVoltageColor(g, v2);
 	drawThickLine(g, cathode[0], cathode[1]);
 
-	// draw wings on cathode
-	drawThickLine(g, wing[0], cathode[0]);
-	drawThickLine(g, wing[1], cathode[1]);
-	    
+    switch (symSet) {
+        case ANSI_US:
+            // draw wings on cathode
+            drawThickLine(g, wing[0], cathode[0]);
+            drawThickLine(g, wing[1], cathode[1]);
+            break;
+        case IEC_INT:
+            drawThickLine(g, wing2[0], cathode[0]);
+            drawThickLine(g, wing2[1], cathode[1]);
+            break;
+        case PN_PL:
+            drawThickLine(g, wing3, cathode[1]);
+            break;
+    }
+
 	doDots(g);
 	drawPosts(g);
     }
