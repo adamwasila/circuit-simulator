@@ -4,7 +4,7 @@ import java.awt.Dialog;
 
 import netscape.javascript.*; // add plugin.jar to classpath during compilation
 
-class ImportExportAppletDialog
+public class ImportExportAppletDialog
 extends Dialog
 implements ImportExportDialog
 {

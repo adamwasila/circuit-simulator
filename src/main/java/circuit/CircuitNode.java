@@ -2,9 +2,9 @@ package circuit;
 
 import java.util.Vector;
 
-class CircuitNode {
+public class CircuitNode {
     int x, y;
-    Vector<CircuitNodeLink> links;
+    public Vector<CircuitNodeLink> links;
     boolean internal;
     CircuitNode() { links = new Vector<CircuitNodeLink>(); }
 }

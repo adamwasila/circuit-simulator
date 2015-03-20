@@ -7,7 +7,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
-class ImportExportFileDialog
+public class ImportExportFileDialog
 implements ImportExportDialog
 {
     CirSim cframe;

@@ -2,7 +2,7 @@ package circuit;
 
 import java.awt.*;
 
-class CircuitLayout implements LayoutManager {
+public class CircuitLayout implements LayoutManager {
     public CircuitLayout() {}
     public void addLayoutComponent(String name, Component c) {}
     public void removeLayoutComponent(Component c) {}

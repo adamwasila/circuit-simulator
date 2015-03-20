@@ -3,7 +3,7 @@ package circuit;
 import java.awt.*;
 import java.awt.event.*;
 
-class EditDialogLayout implements LayoutManager {
+public class EditDialogLayout implements LayoutManager {
     public EditDialogLayout() {}
     public void addLayoutComponent(String name, Component c) {}
     public void removeLayoutComponent(Component c) {}

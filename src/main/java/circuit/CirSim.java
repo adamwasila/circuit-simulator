@@ -2,6 +2,7 @@ package circuit;// circuit.CirSim.java (c) 2010 by Paul Falstad
 
 // For information about the theory behind this, see Electronic circuit.Circuit & System Simulation Methods by Pillage
 
+import circuit.element.*;
 import circuit.ui.CheckboxMenuItemGroup;
 
 import java.awt.*;
@@ -21,7 +22,7 @@ public class CirSim extends Frame
   implements ComponentListener, ActionListener, AdjustmentListener,
   MouseMotionListener, MouseListener, ItemListener, KeyListener {
 
-    enum SymbolSet {
+    public enum SymbolSet {
       ANSI_US,
       IEC_INT,
       PN_PL
@@ -29,7 +30,7 @@ public class CirSim extends Frame
     
     Thread engine = null;
 
-    Dimension winSize;
+    public Dimension winSize;
     Image dbimage;
     
     Random random;
@@ -40,19 +41,19 @@ public class CirSim extends Frame
 	return "circuit.Circuit by Paul Falstad";
     }
 
-    static Container main;
+    public static Container main;
     Label titleLabel;
     Button resetButton;
     Button dumpMatrixButton;
     MenuItem exportItem, exportLinkItem, importItem, exitItem, undoItem, redoItem,
 	cutItem, copyItem, pasteItem, selectAllItem, optionsItem;
     Menu optionsMenu;
-    Checkbox stoppedCheck;
-    CheckboxMenuItem dotsCheckItem;
-    CheckboxMenuItem voltsCheckItem;
-    CheckboxMenuItem powerCheckItem;
-    CheckboxMenuItem smallGridCheckItem;
-    CheckboxMenuItem showValuesCheckItem;
+    public Checkbox stoppedCheck;
+    public CheckboxMenuItem dotsCheckItem;
+    public CheckboxMenuItem voltsCheckItem;
+    public CheckboxMenuItem powerCheckItem;
+    public CheckboxMenuItem smallGridCheckItem;
+    public CheckboxMenuItem showValuesCheckItem;
     CheckboxMenuItem conductanceCheckItem;
 
 //    CheckboxMenuItem euroResistorCheckItem;
@@ -61,7 +62,7 @@ public class CirSim extends Frame
     CheckboxMenuItem symbolSetIECCheckItem;
     CheckboxMenuItem symbolSetPNCheckItem;
 
-    CheckboxMenuItem printableCheckItem;
+    public CheckboxMenuItem printableCheckItem;
     CheckboxMenuItem conventionCheckItem;
     CheckboxMenuItem idealWireCheckItem;
     Scrollbar speedBar;
@@ -95,14 +96,14 @@ public class CirSim extends Frame
     CheckboxMenuItem scopeVceIcMenuItem;
     MenuItem scopeSelectYMenuItem;
     Class addingClass;
-    int mouseMode = MODE_SELECT;
+    public int mouseMode = MODE_SELECT;
     int tempMouseMode = MODE_SELECT;
     String mouseModeStr = "Select";
     static final double pi = 3.14159265358979323846;
     static final int MODE_ADD_ELM = 0;
     static final int MODE_DRAG_ALL = 1;
-    static final int MODE_DRAG_ROW = 2;
-    static final int MODE_DRAG_COLUMN = 3;
+    public static final int MODE_DRAG_ROW = 2;
+    public static final int MODE_DRAG_COLUMN = 3;
     static final int MODE_DRAG_SELECTED = 4;
     static final int MODE_DRAG_POST = 5;
     static final int MODE_SELECT = 6;
@@ -110,31 +111,31 @@ public class CirSim extends Frame
     int dragX, dragY, initDragX, initDragY;
     int selectedSource;
     Rectangle selectedArea;
-    int gridSize, gridMask, gridRound;
+    public int gridSize, gridMask, gridRound;
     boolean dragging;
-    boolean analyzeFlag;
+    public boolean analyzeFlag;
     boolean dumpMatrix;
     boolean useBufferedImage;
     boolean isMac;
     String ctrlMetaKey;
-    double t;
+    public double t;
     int pause = 10;
     int scopeSelected = -1;
     int menuScope = -1;
     int hintType = -1, hintItem1, hintItem2;
     String stopMessage;
-    double timeStep;
+    public double timeStep;
     static final int HINT_LC = 1;
     static final int HINT_RC = 2;
     static final int HINT_3DB_C = 3;
     static final int HINT_TWINT = 4;
     static final int HINT_3DB_L = 5;
-    Vector<CircuitElm> elmList;
+    public Vector<CircuitElm> elmList;
 //    Vector setupList;
-    CircuitElm dragElm, menuElm, mouseElm, stopElm;
+    public CircuitElm dragElm, menuElm, mouseElm, stopElm;
     boolean didSwitch = false;
     int mousePost = -1;
-    CircuitElm plotXElm, plotYElm;
+    public CircuitElm plotXElm, plotYElm;
     int draggingPost;
     SwitchElm heldSwitchElm;
     double circuitMatrix[][], circuitRightSide[],
@@ -152,14 +153,14 @@ public class CirSim extends Frame
     static EditDialog editDialog;
     static ImportExportDialog impDialog, expDialog;
     Class dumpTypes[], shortcuts[];
-    static String muString = "u";
-    static String ohmString = "ohm";
+    public static String muString = "u";
+    public static String ohmString = "ohm";
     String clipboard;
     Rectangle circuitArea;
     int circuitBottom;
     Vector<String> undoStack, redoStack;
 
-    int getrand(int x) {
+    public int getrand(int x) {
 	int q = random.nextInt();
 	if (q < 0) q = -q;
 	return q % x;
@@ -367,104 +368,104 @@ public class CirSim extends Frame
 	else
 	    mainMenu.add(circuitsMenu);
 
-	mainMenu.add(getClassCheckItem("Add Wire", "circuit.WireElm"));
-	mainMenu.add(getClassCheckItem("Add Resistor", "circuit.ResistorElm"));
+	mainMenu.add(getClassCheckItem("Add Wire", "circuit.element.WireElm"));
+	mainMenu.add(getClassCheckItem("Add Resistor", "circuit.element.ResistorElm"));
 	
 	Menu passMenu = new Menu("Passive Components");
 	mainMenu.add(passMenu);
-	passMenu.add(getClassCheckItem("Add Capacitor", "circuit.CapacitorElm"));
-	passMenu.add(getClassCheckItem("Add circuit.Inductor", "circuit.InductorElm"));
-	passMenu.add(getClassCheckItem("Add Switch", "circuit.SwitchElm"));
-	passMenu.add(getClassCheckItem("Add Push Switch", "circuit.PushSwitchElm"));
-	passMenu.add(getClassCheckItem("Add SPDT Switch", "circuit.Switch2Elm"));
-	passMenu.add(getClassCheckItem("Add Potentiometer", "circuit.PotElm"));
-	passMenu.add(getClassCheckItem("Add Transformer", "circuit.TransformerElm"));
+	passMenu.add(getClassCheckItem("Add Capacitor", "circuit.element.CapacitorElm"));
+	passMenu.add(getClassCheckItem("Add circuit.Inductor", "circuit.element.InductorElm"));
+	passMenu.add(getClassCheckItem("Add Switch", "circuit.element.SwitchElm"));
+	passMenu.add(getClassCheckItem("Add Push Switch", "circuit.element.PushSwitchElm"));
+	passMenu.add(getClassCheckItem("Add SPDT Switch", "circuit.element.Switch2Elm"));
+	passMenu.add(getClassCheckItem("Add Potentiometer", "circuit.element.PotElm"));
+	passMenu.add(getClassCheckItem("Add Transformer", "circuit.element.TransformerElm"));
 	passMenu.add(getClassCheckItem("Add Tapped Transformer",
-				       "circuit.TappedTransformerElm"));
-	passMenu.add(getClassCheckItem("Add Transmission Line", "circuit.TransLineElm"));
-	passMenu.add(getClassCheckItem("Add Relay", "circuit.RelayElm"));
-	passMenu.add(getClassCheckItem("Add Memristor", "circuit.MemristorElm"));
-	passMenu.add(getClassCheckItem("Add Spark Gap", "circuit.SparkGapElm"));
+				       "circuit.element.TappedTransformerElm"));
+	passMenu.add(getClassCheckItem("Add Transmission Line", "circuit.element.TransLineElm"));
+	passMenu.add(getClassCheckItem("Add Relay", "circuit.element.RelayElm"));
+	passMenu.add(getClassCheckItem("Add Memristor", "circuit.element.MemristorElm"));
+	passMenu.add(getClassCheckItem("Add Spark Gap", "circuit.element.SparkGapElm"));
 	
 	Menu inputMenu = new Menu("Inputs/Outputs");
 	mainMenu.add(inputMenu);
-	inputMenu.add(getClassCheckItem("Add Ground", "circuit.GroundElm"));
-	inputMenu.add(getClassCheckItem("Add Voltage Source (2-terminal)", "circuit.DCVoltageElm"));
-	inputMenu.add(getClassCheckItem("Add A/C Source (2-terminal)", "circuit.ACVoltageElm"));
-	inputMenu.add(getClassCheckItem("Add Voltage Source (1-terminal)", "circuit.RailElm"));
-	inputMenu.add(getClassCheckItem("Add A/C Source (1-terminal)", "circuit.ACRailElm"));
-	inputMenu.add(getClassCheckItem("Add Square Wave (1-terminal)", "circuit.SquareRailElm"));
-	inputMenu.add(getClassCheckItem("Add Analog Output", "circuit.OutputElm"));
-	inputMenu.add(getClassCheckItem("Add Logic Input", "circuit.LogicInputElm"));
-	inputMenu.add(getClassCheckItem("Add Logic Output", "circuit.LogicOutputElm"));
-	inputMenu.add(getClassCheckItem("Add Clock", "circuit.ClockElm"));
-	inputMenu.add(getClassCheckItem("Add A/C Sweep", "circuit.SweepElm"));
-	inputMenu.add(getClassCheckItem("Add Var. Voltage", "circuit.VarRailElm"));
-	inputMenu.add(getClassCheckItem("Add Antenna", "circuit.AntennaElm"));
-	inputMenu.add(getClassCheckItem("Add Current Source", "circuit.CurrentElm"));
-	inputMenu.add(getClassCheckItem("Add LED", "circuit.LEDElm"));
-	inputMenu.add(getClassCheckItem("Add Lamp (beta)", "circuit.LampElm"));
+	inputMenu.add(getClassCheckItem("Add Ground", "circuit.element.GroundElm"));
+	inputMenu.add(getClassCheckItem("Add Voltage Source (2-terminal)", "circuit.element.DCVoltageElm"));
+	inputMenu.add(getClassCheckItem("Add A/C Source (2-terminal)", "circuit.element.ACVoltageElm"));
+	inputMenu.add(getClassCheckItem("Add Voltage Source (1-terminal)", "circuit.element.RailElm"));
+	inputMenu.add(getClassCheckItem("Add A/C Source (1-terminal)", "circuit.element.ACRailElm"));
+	inputMenu.add(getClassCheckItem("Add Square Wave (1-terminal)", "circuit.element.SquareRailElm"));
+	inputMenu.add(getClassCheckItem("Add Analog Output", "circuit.element.OutputElm"));
+	inputMenu.add(getClassCheckItem("Add Logic Input", "circuit.element.LogicInputElm"));
+	inputMenu.add(getClassCheckItem("Add Logic Output", "circuit.element.LogicOutputElm"));
+	inputMenu.add(getClassCheckItem("Add Clock", "circuit.element.ClockElm"));
+	inputMenu.add(getClassCheckItem("Add A/C Sweep", "circuit.element.SweepElm"));
+	inputMenu.add(getClassCheckItem("Add Var. Voltage", "circuit.element.VarRailElm"));
+	inputMenu.add(getClassCheckItem("Add Antenna", "circuit.element.AntennaElm"));
+	inputMenu.add(getClassCheckItem("Add Current Source", "circuit.element.CurrentElm"));
+	inputMenu.add(getClassCheckItem("Add LED", "circuit.element.LEDElm"));
+	inputMenu.add(getClassCheckItem("Add Lamp (beta)", "circuit.element.LampElm"));
 	
 	Menu activeMenu = new Menu("Active Components");
 	mainMenu.add(activeMenu);
-	activeMenu.add(getClassCheckItem("Add circuit.Diode", "circuit.DiodeElm"));
-	activeMenu.add(getClassCheckItem("Add Zener circuit.Diode", "circuit.ZenerElm"));
+	activeMenu.add(getClassCheckItem("Add circuit.Diode", "circuit.element.DiodeElm"));
+	activeMenu.add(getClassCheckItem("Add Zener circuit.Diode", "circuit.element.ZenerElm"));
 	activeMenu.add(getClassCheckItem("Add Transistor (bipolar, NPN)",
-				    "circuit.NTransistorElm"));
+				    "circuit.element.NTransistorElm"));
 	activeMenu.add(getClassCheckItem("Add Transistor (bipolar, PNP)",
-				    "circuit.PTransistorElm"));
-	activeMenu.add(getClassCheckItem("Add Op Amp (- on top)", "circuit.OpAmpElm"));
+				    "circuit.element.PTransistorElm"));
+	activeMenu.add(getClassCheckItem("Add Op Amp (- on top)", "circuit.element.OpAmpElm"));
 	activeMenu.add(getClassCheckItem("Add Op Amp (+ on top)",
-				    "circuit.OpAmpSwapElm"));
+				    "circuit.element.OpAmpSwapElm"));
 	activeMenu.add(getClassCheckItem("Add MOSFET (n-channel)",
-				    "circuit.NMosfetElm"));
+				    "circuit.element.NMosfetElm"));
 	activeMenu.add(getClassCheckItem("Add MOSFET (p-channel)",
-				    "circuit.PMosfetElm"));
+				    "circuit.element.PMosfetElm"));
 	activeMenu.add(getClassCheckItem("Add JFET (n-channel)",
-					 "circuit.NJfetElm"));
+					 "circuit.element.NJfetElm"));
 	activeMenu.add(getClassCheckItem("Add JFET (p-channel)",
-					 "circuit.PJfetElm"));
-	activeMenu.add(getClassCheckItem("Add Analog Switch (SPST)", "circuit.AnalogSwitchElm"));
-	activeMenu.add(getClassCheckItem("Add Analog Switch (SPDT)", "circuit.AnalogSwitch2Elm"));
-	activeMenu.add(getClassCheckItem("Add SCR", "circuit.SCRElm"));
+					 "circuit.element.PJfetElm"));
+	activeMenu.add(getClassCheckItem("Add Analog Switch (SPST)", "circuit.element.AnalogSwitchElm"));
+	activeMenu.add(getClassCheckItem("Add Analog Switch (SPDT)", "circuit.element.AnalogSwitch2Elm"));
+	activeMenu.add(getClassCheckItem("Add SCR", "circuit.element.SCRElm"));
 	//activeMenu.add(getClassCheckItem("Add Varactor/Varicap", "VaractorElm"));
-	activeMenu.add(getClassCheckItem("Add Tunnel circuit.Diode", "circuit.TunnelDiodeElm"));
-	activeMenu.add(getClassCheckItem("Add Triode", "circuit.TriodeElm"));
-	//activeMenu.add(getClassCheckItem("Add Diac", "circuit.DiacElm"));
-	//activeMenu.add(getClassCheckItem("Add Triac", "circuit.TriacElm"));
-	//activeMenu.add(getClassCheckItem("Add Photoresistor", "circuit.PhotoResistorElm"));
-	//activeMenu.add(getClassCheckItem("Add Thermistor", "circuit.ThermistorElm"));
-	activeMenu.add(getClassCheckItem("Add CCII+", "circuit.CC2Elm"));
-	activeMenu.add(getClassCheckItem("Add CCII-", "circuit.CC2NegElm"));
+	activeMenu.add(getClassCheckItem("Add Tunnel circuit.Diode", "circuit.element.TunnelDiodeElm"));
+	activeMenu.add(getClassCheckItem("Add Triode", "circuit.element.TriodeElm"));
+	//activeMenu.add(getClassCheckItem("Add Diac", "circuit.element.DiacElm"));
+	//activeMenu.add(getClassCheckItem("Add Triac", "circuit.element.TriacElm"));
+	//activeMenu.add(getClassCheckItem("Add Photoresistor", "circuit.element.PhotoResistorElm"));
+	//activeMenu.add(getClassCheckItem("Add Thermistor", "circuit.element.ThermistorElm"));
+	activeMenu.add(getClassCheckItem("Add CCII+", "circuit.element.CC2Elm"));
+	activeMenu.add(getClassCheckItem("Add CCII-", "circuit.element.CC2NegElm"));
 
 	Menu gateMenu = new Menu("Logic Gates");
 	mainMenu.add(gateMenu);
-	gateMenu.add(getClassCheckItem("Add Inverter", "circuit.InverterElm"));
-	gateMenu.add(getClassCheckItem("Add NAND Gate", "circuit.NandGateElm"));
-	gateMenu.add(getClassCheckItem("Add NOR Gate", "circuit.NorGateElm"));
-	gateMenu.add(getClassCheckItem("Add AND Gate", "circuit.AndGateElm"));
-	gateMenu.add(getClassCheckItem("Add OR Gate", "circuit.OrGateElm"));
-	gateMenu.add(getClassCheckItem("Add XOR Gate", "circuit.XorGateElm"));
+	gateMenu.add(getClassCheckItem("Add Inverter", "circuit.element.InverterElm"));
+	gateMenu.add(getClassCheckItem("Add NAND Gate", "circuit.element.NandGateElm"));
+	gateMenu.add(getClassCheckItem("Add NOR Gate", "circuit.element.NorGateElm"));
+	gateMenu.add(getClassCheckItem("Add AND Gate", "circuit.element.AndGateElm"));
+	gateMenu.add(getClassCheckItem("Add OR Gate", "circuit.element.OrGateElm"));
+	gateMenu.add(getClassCheckItem("Add XOR Gate", "circuit.element.XorGateElm"));
 
 	Menu chipMenu = new Menu("Chips");
 	mainMenu.add(chipMenu);
-	chipMenu.add(getClassCheckItem("Add D Flip-Flop", "circuit.DFlipFlopElm"));
-	chipMenu.add(getClassCheckItem("Add JK Flip-Flop", "circuit.JKFlipFlopElm"));
-	chipMenu.add(getClassCheckItem("Add 7 Segment LED", "circuit.SevenSegElm"));
-	chipMenu.add(getClassCheckItem("Add VCO", "circuit.VCOElm"));
-	chipMenu.add(getClassCheckItem("Add Phase Comparator", "circuit.PhaseCompElm"));
-	chipMenu.add(getClassCheckItem("Add Counter", "circuit.CounterElm"));
-	chipMenu.add(getClassCheckItem("Add Decade Counter", "circuit.DecadeElm"));
-	chipMenu.add(getClassCheckItem("Add 555 Timer", "circuit.TimerElm"));
-	chipMenu.add(getClassCheckItem("Add DAC", "circuit.DACElm"));
-	chipMenu.add(getClassCheckItem("Add ADC", "circuit.ADCElm"));
-	chipMenu.add(getClassCheckItem("Add Latch", "circuit.LatchElm"));
+	chipMenu.add(getClassCheckItem("Add D Flip-Flop", "circuit.element.DFlipFlopElm"));
+	chipMenu.add(getClassCheckItem("Add JK Flip-Flop", "circuit.element.JKFlipFlopElm"));
+	chipMenu.add(getClassCheckItem("Add 7 Segment LED", "circuit.element.SevenSegElm"));
+	chipMenu.add(getClassCheckItem("Add VCO", "circuit.element.VCOElm"));
+	chipMenu.add(getClassCheckItem("Add Phase Comparator", "circuit.element.PhaseCompElm"));
+	chipMenu.add(getClassCheckItem("Add Counter", "circuit.element.CounterElm"));
+	chipMenu.add(getClassCheckItem("Add Decade Counter", "circuit.element.DecadeElm"));
+	chipMenu.add(getClassCheckItem("Add 555 Timer", "circuit.element.TimerElm"));
+	chipMenu.add(getClassCheckItem("Add DAC", "circuit.element.DACElm"));
+	chipMenu.add(getClassCheckItem("Add ADC", "circuit.element.ADCElm"));
+	chipMenu.add(getClassCheckItem("Add Latch", "circuit.element.LatchElm"));
 	
 	Menu otherMenu = new Menu("Other");
 	mainMenu.add(otherMenu);
-	otherMenu.add(getClassCheckItem("Add Text", "circuit.TextElm"));
-	otherMenu.add(getClassCheckItem("Add Box", "circuit.BoxElm"));
-	otherMenu.add(getClassCheckItem("Add circuit.Scope Probe", "circuit.ProbeElm"));
+	otherMenu.add(getClassCheckItem("Add Text", "circuit.element.TextElm"));
+	otherMenu.add(getClassCheckItem("Add Box", "circuit.element.BoxElm"));
+	otherMenu.add(getClassCheckItem("Add circuit.Scope Probe", "circuit.element.ProbeElm"));
 	otherMenu.add(getCheckItem("Drag All (Alt-drag)", "DragAll"));
 	otherMenu.add(getCheckItem(
 			  isMac ? "Drag Row (Alt-S-drag, S-right)" :
@@ -1146,7 +1147,7 @@ public class CirSim extends Frame
 	cv.repaint();
     }
     
-    Vector<CircuitNode> nodeList;
+    public Vector<CircuitNode> nodeList;
     CircuitElm voltageSources[];
 
     public CircuitNode getCircuitNode(int n) {
@@ -1701,7 +1702,7 @@ public class CirSim extends Frame
 	}
     }
 
-    void stop(String s, CircuitElm ce) {
+    public void stop(String s, CircuitElm ce) {
 	stopMessage = s;
 	circuitMatrix = null;
 	stopElm = ce;
@@ -1712,14 +1713,14 @@ public class CirSim extends Frame
     
     // control voltage source vs with voltage from n1 to n2 (must
     // also call stampVoltageSource())
-    void stampVCVS(int n1, int n2, double coef, int vs) {
+    public void stampVCVS(int n1, int n2, double coef, int vs) {
 	int vn = nodeList.size()+vs;
 	stampMatrix(vn, n1, coef);
 	stampMatrix(vn, n2, -coef);
     }
     
     // stamp independent voltage source #vs, from n1 to n2, amount v
-    void stampVoltageSource(int n1, int n2, int vs, double v) {
+    public void stampVoltageSource(int n1, int n2, int vs, double v) {
 	int vn = nodeList.size()+vs;
 	stampMatrix(vn, n1, -1);
 	stampMatrix(vn, n2, 1);
@@ -1729,7 +1730,7 @@ public class CirSim extends Frame
     }
 
     // use this if the amount of voltage is going to be updated in doStep()
-    void stampVoltageSource(int n1, int n2, int vs) {
+    public void stampVoltageSource(int n1, int n2, int vs) {
 	int vn = nodeList.size()+vs;
 	stampMatrix(vn, n1, -1);
 	stampMatrix(vn, n2, 1);
@@ -1738,12 +1739,12 @@ public class CirSim extends Frame
 	stampMatrix(n2, vn, -1);
     }
     
-    void updateVoltageSource(int n1, int n2, int vs, double v) {
+    public void updateVoltageSource(int n1, int n2, int vs, double v) {
 	int vn = nodeList.size()+vs;
 	stampRightSide(vn, v);
     }
     
-    void stampResistor(int n1, int n2, double r) {
+    public void stampResistor(int n1, int n2, double r) {
 	double r0 = 1/r;
 	if (Double.isNaN(r0) || Double.isInfinite(r0)) {
 	    System.out.print("bad resistance " + r + " " + r0 + "\n");
@@ -1756,7 +1757,7 @@ public class CirSim extends Frame
 	stampMatrix(n2, n1, -r0);
     }
 
-    void stampConductance(int n1, int n2, double r0) {
+    public void stampConductance(int n1, int n2, double r0) {
 	stampMatrix(n1, n1, r0);
 	stampMatrix(n2, n2, r0);
 	stampMatrix(n1, n2, -r0);
@@ -1764,20 +1765,20 @@ public class CirSim extends Frame
     }
 
     // current from cn1 to cn2 is equal to voltage from vn1 to 2, divided by g
-    void stampVCCurrentSource(int cn1, int cn2, int vn1, int vn2, double g) {
+    public void stampVCCurrentSource(int cn1, int cn2, int vn1, int vn2, double g) {
 	stampMatrix(cn1, vn1, g);
 	stampMatrix(cn2, vn2, g);
 	stampMatrix(cn1, vn2, -g);
 	stampMatrix(cn2, vn1, -g);
     }
 
-    void stampCurrentSource(int n1, int n2, double i) {
+    public void stampCurrentSource(int n1, int n2, double i) {
 	stampRightSide(n1, -i);
 	stampRightSide(n2, i);
     }
 
     // stamp a current source from n1 to n2 depending on current through vs
-    void stampCCCS(int n1, int n2, int vs, double gain) {
+    public void stampCCCS(int n1, int n2, int vs, double gain) {
 	int vn = nodeList.size()+vs;
 	stampMatrix(n1, vn, gain);
 	stampMatrix(n2, vn, -gain);
@@ -1786,7 +1787,7 @@ public class CirSim extends Frame
     // stamp value x in row i, column j, meaning that a voltage change
     // of dv in node j will increase the current into node i by x dv.
     // (Unless i or j is a voltage source node.)
-    void stampMatrix(int i, int j, double x) {
+    public void stampMatrix(int i, int j, double x) {
 	if (i > 0 && j > 0) {
 	    if (circuitNeedsMap) {
 		i = circuitRowInfo[i-1].mapRow;
@@ -1808,7 +1809,7 @@ public class CirSim extends Frame
 
     // stamp value x on the right side of row i, representing an
     // independent current source flowing into node i
-    void stampRightSide(int i, double x) {
+    public void stampRightSide(int i, double x) {
 	if (i > 0) {
 	    if (circuitNeedsMap) {
 		i = circuitRowInfo[i-1].mapRow;
@@ -1820,14 +1821,14 @@ public class CirSim extends Frame
     }
 
     // indicate that the value on the right side of row i changes in doStep()
-    void stampRightSide(int i) {
+    public void stampRightSide(int i) {
 	//System.out.println("rschanges true " + (i-1));
 	if (i > 0)
 	    circuitRowInfo[i-1].rsChanges = true;
     }
     
     // indicate that the values on the left side of row i change in doStep()
-    void stampNonLinear(int i) {
+    public void stampNonLinear(int i) {
 	if (i > 0)
 	    circuitRowInfo[i-1].lsChanges = true;
     }
@@ -1839,8 +1840,8 @@ public class CirSim extends Frame
 	return .1*Math.exp((speedBar.getValue()-61)/24.);
     }
     
-    boolean converged;
-    int subIterations;
+    public boolean converged;
+    public int subIterations;
     void runCircuit() {
 	if (circuitMatrix == null || elmList.size() == 0) {
 	    circuitMatrix = null;
@@ -2446,7 +2447,7 @@ public class CirSim extends Frame
 	setGrid();
     }
     
-    int snapGrid(int x) {
+    public int snapGrid(int x) {
 	return (x+gridRound) & gridMask;
     }
 

@@ -6,7 +6,7 @@ import java.awt.event.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 
-class ImportExportClipboardDialog
+public class ImportExportClipboardDialog
 extends Dialog
 implements ImportExportDialog,ActionListener
 {

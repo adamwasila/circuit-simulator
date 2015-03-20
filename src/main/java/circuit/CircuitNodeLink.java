@@ -1,6 +1,8 @@
 package circuit;
 
-class CircuitNodeLink {
+import circuit.element.CircuitElm;
+
+public class CircuitNodeLink {
 	int num;
 	CircuitElm elm;
     }

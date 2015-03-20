@@ -1,6 +1,8 @@
 package circuit;
 
-class EditOptions implements Editable {
+import circuit.element.CircuitElm;
+
+public class EditOptions implements Editable {
     CirSim sim;
     public EditOptions(CirSim s) { sim = s; }
     public EditInfo getEditInfo(int n) {

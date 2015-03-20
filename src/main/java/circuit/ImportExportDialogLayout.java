@@ -2,7 +2,7 @@ package circuit;
 
 import java.awt.*;
 
-class ImportExportDialogLayout implements LayoutManager {
+public class ImportExportDialogLayout implements LayoutManager {
     public ImportExportDialogLayout() {}
     public void addLayoutComponent(String name, Component c) {}
     public void removeLayoutComponent(Component c) {}

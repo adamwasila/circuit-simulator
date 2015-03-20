@@ -2,7 +2,7 @@ package circuit;
 
 import java.awt.*;
 
-class CircuitCanvas extends Canvas {
+public class CircuitCanvas extends Canvas {
     CirSim pg;
     CircuitCanvas(CirSim p) {
 	pg = p;
